@@ -34,7 +34,7 @@ fs.mkdirSync(DATA_DIR, { recursive: true });
 const DATA_FILE = path.join(DATA_DIR, "data.json");
 
 if (!ADMIN_PASSWORD) {
-  console.error("Defina ADMIN_PASSWORD no arquivo .env antes de iniciar.");
+  console.error("Defina ADMIN_PASSWORD antes de iniciar (no arquivo .env local, ou em Variables no Railway)."); 
   process.exit(1);
 }
 
