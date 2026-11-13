@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Organizador – Amigo Havaiana</title>
+<style>
+  :root{--bg:#f2f2f4;--card:#fff;--ink:#0a0a0a;--muted:#8e8e93;--line:#e4e4e7;--accent:#0a0a0a;--ok:#1f6b45;--okbg:#e6f2ea;--errbg:#fbe9e9;--soft:#f3eee5;--warn:#8a5a00;--warnbg:#fdf3dc}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  .wrap{max-width:820px;margin:0 auto;padding:32px 20px 60px}
+  h1{font-size:26px;margin:0 0 4px}
+  h2{font-size:17px;margin:0 0 4px}
+  .sub,.hint{color:var(--muted)}
+  .hint{font-size:13px;margin:2px 0 12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
+  textarea{width:100%;font:inherit;padding:10px;border:1px solid var(--line);border-radius:9px;background:var(--bg);min-height:80px}
+  button{font:inherit;font-weight:600;border:0;border-radius:9px;padding:10px 16px;cursor:pointer}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .primary{background:var(--accent);color:#fff}
+  .ghost{background:var(--soft);color:var(--ink)}
+  .big{font-size:17px;padding:15px;width:100%}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{text-align:left;font-size:12px;color:var(--muted);padding:6px;border-bottom:1px solid var(--line)}
+  td{padding:8px 6px;border-bottom:1px solid var(--line)}
+  .pill{font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;white-space:nowrap}
+  .ok{background:var(--okbg);color:var(--ok)} .err{background:var(--errbg);color:#b3261e} .wait{background:var(--soft);color:var(--muted)}
+  .banner{padding:12px 14px;border-radius:10px;font-size:14px;margin-bottom:14px}
+  .b-ok{background:var(--okbg);color:var(--ok)} .b-warn{background:var(--warnbg);color:var(--warn)} .b-err{background:var(--errbg);color:#b3261e}
+  .x{background:none;color:var(--muted);padding:2px 8px;font-size:16px}
+  .stats{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;font-size:14px;color:var(--muted);margin-bottom:10px}
+  .stats b{color:var(--ink);font-size:18px}
+  .scroll{overflow-x:auto}
+  .hidden{display:none}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>🩴 Organizador</h1><button class="ghost" id="btnSair">Sair</button></div>
+  <p class="sub">O resultado do sorteio não aparece aqui, então você também pode participar.</p>
+
+  <div class="card">
+    <h2>1. Enviar convites</h2>
+    <p class="hint">Cole os e-mails (um por linha ou separados por vírgula). Cada pessoa recebe o link de inscrição.</p>
+    <textarea id="emails" placeholder="ana@empresa.com.br&#10;bruno@empresa.com.br"></textarea>
+    <div class="row"><button class="primary" id="btnConv">Enviar convites</button><span id="convMsg" class="hint" style="margin:0"></span></div>
+  </div>
+
+  <div class="card">
+    <h2>2. Inscritos</h2>
+    <div class="stats" id="stats"></div>
+    <div class="scroll"><table>
+      <thead><tr><th>Nome</th><th>E-mail</th><th>Havaiana</th><th>Resultado</th><th></th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table></div>
+    <p class="hint" id="pend" style="margin-top:10px"></p>
+  </div>
+
+  <div class="card">
+    <h2>3. Sorteio</h2>
+    <div id="info"></div>
+    <button class="primary big" id="btnSort">Sortear e enviar resultados</button>
+    <div class="row hidden" id="retryRow"><button class="ghost" id="btnRetry">Reenviar os que deram erro</button></div>
+  </div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let S = null, busy = false;
+
+async function api(url, opts={}){
+  const r = await fetch(url, {headers:{"Content-Type":"application/json"}, ...opts});
+  const j = await r.json().catch(()=>({}));
+  if(r.status===401){ location.href="/login"; throw new Error("Sessão expirada."); }
+  if(!r.ok) throw new Error(j.erro || "Erro "+r.status);
+  return j;
+}
+const pill = st => st==="enviado" ? '<span class="pill ok">✓ enviado</span>' : st==="erro" ? '<span class="pill err">erro</span>' : '<span class="pill wait">—</span>';
+
+async function load(){ S = await api("/api/admin/estado"); render(); }
+
+function render(){
+  const P = S.participants;
+  $("tbody").innerHTML = P.length ? P.map(p=>`<tr>
+    <td>${esc(p.nome)}</td><td style="color:var(--muted)">${esc(p.email)}</td><td><b>${esc(p.chinelo)}</b></td>
+    <td>${pill(p.resultado)}${p.erro?`<div class="hint" style="margin:2px 0 0">${esc(p.erro)}</div>`:""}</td>
+    <td>${S.sorteadoEm?"":`<button class="x" data-rm="${p.id}" title="Remover">×</button>`}</td></tr>`).join("")
+    : '<tr><td colspan="5" class="hint">Nenhum inscrito ainda.</td></tr>';
+  document.querySelectorAll("[data-rm]").forEach(b=> b.onclick = async ()=>{
+    await api("/api/admin/participante/"+b.dataset.rm,{method:"DELETE"}).catch(e=>alert(e.message)); load();
+  });
+
+  const convidados = Object.keys(S.convites), inscritos = new Set(P.map(p=>p.email));
+  const naoInscritos = convidados.filter(e=>!inscritos.has(e));
+  $("stats").innerHTML = `<span><b>${convidados.length}</b> convidados</span><span><b>${P.length}</b> inscritos</span>`
+    + `<span>✍️ Inscrições até <b style="font-size:15px">${esc(S.dataInscricao)}</b>${S.inscricoesAbertas?"":" (encerradas)"}</span>`
+    + (S.dataEntrega ? `<span>🎁 Entrega <b style="font-size:15px">${esc(S.dataEntrega)}</b></span>` : "");
+  $("pend").innerHTML = naoInscritos.length ? `Ainda não se inscreveram: ${naoInscritos.map(esc).join(", ")}` : "";
+
+  let info;
+  if(S.sorteadoEm){
+    const ok = P.filter(p=>p.resultado==="enviado").length, err = P.filter(p=>p.resultado==="erro").length;
+    info = err ? `<div class="banner b-err">Sorteio feito. ${ok} de ${P.length} e-mails enviados, ${err} com erro.</div>`
+               : `<div class="banner b-ok">✓ Sorteio realizado em ${new Date(S.sorteadoEm).toLocaleString("pt-BR")}. ${ok} de ${P.length} resultados enviados.</div>`;
+    $("btnSort").disabled = true; $("btnSort").textContent = "Sorteio já realizado";
+    $("retryRow").classList.toggle("hidden", !err);
+  } else if(!S.liberado){
+    info = S.auto.ativo
+      ? `<div class="banner b-warn">O sorteio será feito <b>automaticamente</b> em ${S.dataSorteio} às ${S.auto.hora}, e cada inscrito recebe por e-mail quem tirou. O servidor precisa estar ligado nesse horário.</div>`
+      : `<div class="banner b-warn">O botão será liberado no dia ${S.dataSorteio}.</div>`; $("btnSort").disabled = true;
+  } else if(P.length < 3){
+    info = `<div class="banner b-warn">São necessários pelo menos 3 inscritos.</div>`; $("btnSort").disabled = true;
+  } else {
+    info = `<div class="banner b-ok">Tudo pronto: ${P.length} inscritos.${naoInscritos.length?` Atenção: ${naoInscritos.length} convidado(s) ainda não se inscreveram.`:""}</div>`;
+    $("btnSort").disabled = busy;
+  }
+  if(S.modoTeste) info = `<div class="banner b-warn">Modo teste: nenhum e-mail é enviado de verdade, eles aparecem no console do servidor.</div>` + info;
+  $("info").innerHTML = info;
+}
+
+$("btnConv").onclick = async ()=>{
+  $("btnConv").disabled = true; $("convMsg").textContent = "Enviando…";
+  try{
+    const {resultado} = await api("/api/admin/convites",{method:"POST", body:JSON.stringify({emails:$("emails").value})});
+    const falhas = resultado.filter(r=>!r.ok);
+    $("convMsg").textContent = `${resultado.length-falhas.length} enviado(s)` + (falhas.length?`, ${falhas.length} com erro: ${falhas.map(f=>f.email+" ("+f.erro+")").join("; ")}`:"");
+    $("emails").value = falhas.map(f=>f.email).join("\n");
+  }catch(e){ $("convMsg").textContent = e.message; }
+  $("btnConv").disabled = false; load();
+};
+
+let confirmArmed = false;
+$("btnSort").onclick = async ()=>{
+  if(!confirmArmed){ confirmArmed = true; $("btnSort").textContent = "Clique de novo para confirmar (não pode ser refeito)"; setTimeout(()=>{ confirmArmed=false; render(); $("btnSort").textContent = S.sorteadoEm?"Sorteio já realizado":"Sortear e enviar resultados"; }, 5000); return; }
+  confirmArmed = false; busy = true;
+  $("btnSort").disabled = true; $("btnSort").textContent = "Sorteando e enviando…";
+  try{ await api("/api/admin/sortear",{method:"POST"}); }catch(e){ $("info").innerHTML = `<div class="banner b-err">${esc(e.message)}</div>`; }
+  busy = false; load();
+};
+$("btnRetry").onclick = async ()=>{
+  $("btnRetry").disabled = true;
+  try{ await api("/api/admin/reenviar",{method:"POST"}); }catch(e){ alert(e.message); }
+  $("btnRetry").disabled = false; load();
+};
+
+load(); setInterval(()=>{ if(!busy) load(); }, 15000);
+$("btnSair").onclick = async ()=>{ await fetch("/api/logout",{method:"POST"}); location.href="/login"; };
+</script>
+</body>
+</html>

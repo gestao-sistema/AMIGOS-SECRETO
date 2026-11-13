@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amigo Havaiana · Azime</title>
+<meta name="description" content="Inscreva-se no Amigo Havaiana da Azime: nome, e-mail e o número da sua havaiana. No dia do sorteio você recebe por e-mail quem tirou.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="🩴 Amigo Havaiana · Azime">
+<meta property="og:description" content="Inscreva-se com seu nome, e-mail e o número da sua havaiana. No dia do sorteio você recebe por e-mail quem tirou.">
+<meta property="og:url" content="__BASE__/">
+<meta property="og:image" content="__BASE__/preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🩴</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0a0a0a; --ink:#0a0a0a; --g900:#1c1c1e; --g700:#3a3a3c; --g500:#8e8e93; --g400:#a1a1a6; --g300:#d4d4d8; --g100:#f2f2f4; --white:#fff;
+    --line:rgba(255,255,255,.14); --display:"Josefin Sans",system-ui,sans-serif; --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font-family:var(--body);background:var(--black);color:var(--white);line-height:1.5;overflow-x:hidden}
+
+  /* ---------- fundo: praia em traço fino ---------- */
+  .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .bg svg{position:absolute;inset:0;width:100%;height:100%}
+  .bg .glow{position:absolute;inset:0;background:radial-gradient(ellipse 70% 55% at 30% 35%,rgba(255,255,255,.07),transparent 70%),radial-gradient(ellipse 50% 40% at 85% 100%,rgba(255,255,255,.05),transparent 70%)}
+  .wave{animation:wave 9s ease-in-out infinite}
+  .wave.w2{animation-duration:12s;animation-delay:-3s}.wave.w3{animation-duration:15s;animation-delay:-6s}
+  @keyframes wave{0%,100%{transform:translateX(0)}50%{transform:translateX(-40px)}}
+  .sun{animation:spin 80s linear infinite;transform-origin:center;transform-box:fill-box}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .palm{animation:sway 7s ease-in-out infinite;transform-origin:bottom center;transform-box:fill-box}
+  @keyframes sway{0%,100%{transform:rotate(-1.5deg)}50%{transform:rotate(1.5deg)}}
+  .flip{position:absolute;opacity:.16;animation:float 10s ease-in-out infinite}
+  .flip svg{width:100%;height:100%}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(var(--r))}50%{transform:translateY(-18px) rotate(calc(var(--r) + 10deg))}}
+
+  /* ---------- layout ---------- */
+  .page{position:relative;z-index:1;min-height:100vh;max-width:1180px;margin:0 auto;padding:clamp(16px,4vh,44px) clamp(16px,4vw,40px);
+    display:grid;grid-template-columns:minmax(0,1fr) 430px;gap:clamp(28px,5vw,80px);align-items:center}
+
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand img{height:clamp(28px,4.4vh,38px);display:block}
+  .brand span{font-family:var(--display);font-size:12px;letter-spacing:4px;color:var(--g400);text-transform:uppercase}
+  .badge{display:inline-flex;align-items:center;gap:8px;margin-top:clamp(18px,3.4vh,34px);border:1px solid var(--line);border-radius:99px;padding:6px 14px;
+    font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--g300);background:rgba(255,255,255,.04)}
+  .badge i{width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 0 0 rgba(255,255,255,.6);animation:pulse 2s infinite}
+  @keyframes pulse{70%{box-shadow:0 0 0 8px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+  h1{font-family:var(--display);font-weight:300;font-size:clamp(46px,min(7.4vw,10.5vh),96px);line-height:.95;letter-spacing:-1px;margin:clamp(12px,2.2vh,20px) 0 0}
+  h1 b{font-weight:700;display:block}
+  .tag{max-width:470px;margin:clamp(10px,2vh,18px) 0 0;color:var(--g400);font-size:clamp(15px,2vh,17px)}
+  .tag strong{color:#fff;font-weight:600}
+
+  .count{display:flex;gap:10px;margin-top:clamp(16px,3vh,28px)}
+  .count div{min-width:clamp(62px,8vh,76px);text-align:center;border:1px solid var(--line);border-radius:14px;padding:clamp(6px,1.1vh,10px) 6px;background:rgba(255,255,255,.04);backdrop-filter:blur(4px)}
+  .count b{display:block;font-family:var(--display);font-size:clamp(24px,3.8vh,34px);font-weight:600;line-height:1.1}
+  .count span{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g500)}
+  .when{margin-top:10px;font-size:13px;color:var(--g400)}
+  .when b{color:#fff}
+
+  .steps{display:flex;margin-top:clamp(16px,3.2vh,30px);border-top:1px solid var(--line);padding-top:clamp(12px,2.2vh,20px);gap:0}
+  .step{flex:1;padding-right:14px}
+  .step + .step{padding-left:16px;border-left:1px solid var(--line)}
+  .step small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--g500)}
+  .step b{display:block;font-family:var(--display);font-size:clamp(20px,3vh,26px);font-weight:600;margin-top:2px}
+  .step span{font-size:13px;color:var(--g400)}
+
+  /* ---------- cartão ---------- */
+  .card{background:#fff;color:var(--ink);border-radius:24px;padding:clamp(20px,3.4vh,32px) 28px;box-shadow:0 30px 80px -20px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.08)}
+  .card h2{font-family:var(--display);font-size:26px;font-weight:700;margin:0;line-height:1.1}
+  .card .hint{margin:4px 0 clamp(8px,1.6vh,16px);color:var(--g500);font-size:14px}
+  label{display:block;font-weight:600;font-size:13px;margin:clamp(10px,1.7vh,16px) 0 6px;color:var(--g700)}
+  .field{position:relative}
+  .field svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--g500);fill:none;stroke-width:1.6;pointer-events:none;transition:stroke .15s}
+  .field:focus-within svg{stroke:var(--ink)}
+  input{width:100%;font:inherit;font-size:16px;padding:clamp(11px,1.6vh,14px) 14px clamp(11px,1.6vh,14px) 44px;border:1.5px solid var(--g100);border-radius:12px;background:var(--g100);color:var(--ink);outline:none;transition:border-color .15s,background .15s,box-shadow .15s}
+  input:focus{background:#fff;border-color:var(--ink);box-shadow:0 0 0 4px rgba(10,10,10,.08)}
+  input::placeholder{color:var(--g400)}
+  .chips{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:8px}
+  .chip{font:inherit;font-size:12px;font-weight:600;border:1.5px solid var(--g300);background:#fff;color:var(--g700);border-radius:99px;padding:4px 0;cursor:pointer;transition:all .12s}
+  .chip:hover{border-color:var(--ink);color:var(--ink)}
+  .chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .btn{width:100%;margin-top:clamp(16px,2.6vh,24px);font:inherit;font-weight:700;font-size:16px;letter-spacing:.5px;border:0;border-radius:14px;padding:clamp(13px,2vh,16px);
+    color:#fff;background:var(--ink);cursor:pointer;position:relative;overflow:hidden;transition:transform .1s,background .15s;display:flex;align-items:center;justify-content:center;gap:10px}
+  .btn::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transform:skewX(-20deg);animation:shine 3.2s ease-in-out infinite}
+  @keyframes shine{0%,60%{left:-60%}100%{left:130%}}
+  .btn:hover{background:var(--g900)} .btn:active{transform:scale(.98)} .btn:disabled{opacity:.6;cursor:wait}
+  .btn .arr{transition:transform .2s} .btn:hover .arr{transform:translateX(4px)}
+  .err{display:none;margin-top:12px;padding:10px 14px;border-radius:10px;background:#fff0f0;color:#b3261e;font-size:14px;font-weight:600}
+  .err.show{display:block}
+  .shake{animation:shake .4s}
+  @keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+  .foot{margin:12px 0 0;text-align:center;font-size:12px;color:var(--g500)}
+
+  .done{text-align:center}
+  .done .big{width:76px;height:76px;margin:4px auto 10px;border-radius:50%;background:var(--ink);display:grid;place-items:center;animation:pop .6s cubic-bezier(.2,1.6,.4,1)}
+  .done .big svg{width:38px;height:38px;stroke:#fff;fill:none;stroke-width:2.2}
+  @keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+  .done h2{font-size:28px;margin:6px 0}
+  .done p{color:var(--g700);margin:8px 0}
+  .done .pill{display:inline-block;margin:6px 0;background:var(--g100);border-radius:99px;padding:6px 14px;font-weight:600;font-size:13px}
+  .again{margin-top:8px;background:none;border:0;color:var(--ink);font:inherit;font-weight:600;cursor:pointer;text-decoration:underline}
+  .hidden{display:none!important}
+
+  #confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
+
+  @media (max-width:900px){
+    .page{grid-template-columns:1fr;align-items:start;gap:26px;padding-top:22px}
+    h1{font-size:clamp(44px,13vw,64px)}
+    .steps{flex-wrap:wrap}
+  }
+  @media (max-width:420px){
+    .count{gap:7px}.count div{min-width:0;flex:1}
+    .step{padding-right:8px}.step + .step{padding-left:10px}.step b{font-size:19px}.step span{font-size:12px}
+    .card{padding:22px 18px}
+    .chips{grid-template-columns:repeat(3,1fr)}
+  }
+  @media (prefers-reduced-motion: reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+
+<!-- fundo -->
+<div class="bg" aria-hidden="true">
+  <div class="glow"></div>
+  <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+    <!-- sol -->
+    <g opacity=".22" transform="translate(1180 170)">
+      <circle r="58" stroke-width="1.4"/>
+      <circle r="74" stroke-width=".8" stroke-dasharray="2 8"/>
+      <g class="sun" stroke-width="1.2">
+        <path d="M0-100v-22M0 100v22M-100 0h-22M100 0h22M-71-71l-15-15M71 71l15 15M-71 71l-15 15M71-71l15-15"/>
+      </g>
+    </g>
+    <!-- coqueiro esquerdo -->
+    <g class="palm" opacity=".2" stroke-width="1.4">
+      <path d="M150 900 C 160 760, 190 640, 250 540"/>
+      <path d="M156 860 l14 -4 M162 800 l15 -3 M172 740 l15 -2 M186 680 l15 0 M204 620 l14 2 M226 570 l13 3"/>
+      <path d="M250 540 C 200 500, 140 505, 90 540 M250 540 C 215 470, 160 450, 110 455 M250 540 C 260 470, 300 430, 350 420 M250 540 C 310 510, 370 520, 410 560 M250 540 C 250 480, 230 440, 200 410"/>
+      <path d="M90 540 l10 -14 M110 455 l12 -6 M350 420 l-4 14 M410 560 l-14 -6"/>
+    </g>
+    <!-- coqueiro direito (menor) -->
+    <g class="palm" opacity=".14" stroke-width="1.2" style="animation-delay:-3s">
+      <path d="M1330 900 C 1325 800, 1300 720, 1255 650"/>
+      <path d="M1255 650 C 1290 610, 1340 610, 1380 635 M1255 650 C 1270 600, 1310 580, 1350 578 M1255 650 C 1230 600, 1190 585, 1150 590 M1255 650 C 1210 630, 1170 640, 1140 670"/>
+    </g>
+    <!-- ondas -->
+    <g stroke-width="1.3">
+      <path class="wave" opacity=".22" d="M-100 760 C 0 735, 100 785, 200 760 S 400 735, 500 760 S 700 785, 800 760 S 1000 735, 1100 760 S 1300 785, 1400 760 S 1600 735, 1700 760"/>
+      <path class="wave w2" opacity=".16" d="M-100 805 C 0 780, 100 830, 200 805 S 400 780, 500 805 S 700 830, 800 805 S 1000 780, 1100 805 S 1300 830, 1400 805 S 1600 780, 1700 805"/>
+      <path class="wave w3" opacity=".1" d="M-100 850 C 0 825, 100 875, 200 850 S 400 825, 500 850 S 700 875, 800 850 S 1000 825, 1100 850 S 1300 875, 1400 850 S 1600 825, 1700 850"/>
+    </g>
+    <!-- pontinhos de areia -->
+    <g fill="#fff" stroke="none" opacity=".18">
+      <circle cx="420" cy="880" r="1.4"/><circle cx="560" cy="870" r="1"/><circle cx="700" cy="888" r="1.3"/><circle cx="880" cy="872" r="1"/><circle cx="1040" cy="886" r="1.4"/><circle cx="1210" cy="874" r="1"/>
+    </g>
+  </svg>
+</div>
+
+<!-- havaianas flutuando (traço) -->
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="hav" viewBox="0 0 60 140">
+    <path d="M30 4C46 4 54 18 52 38C50 56 44 66 46 86C48 108 44 136 30 136C16 136 12 108 14 86C16 66 10 56 8 38C6 18 14 4 30 4Z" fill="none" stroke="#fff" stroke-width="2.4"/>
+    <path d="M30 30L13 66M30 30L47 66" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/>
+    <circle cx="30" cy="30" r="3.4" fill="#fff"/>
+  </symbol>
+</svg>
+<div class="bg" aria-hidden="true" style="z-index:0">
+  <span class="flip" style="--r:-24deg;left:44%;top:7%;width:30px;height:70px;animation-delay:-2s"><svg><use href="#hav"/></svg></span>
+  <span class="flip" style="--r:18deg;left:48%;top:12%;width:30px;height:70px;animation-delay:-2.4s"><svg><use href="#hav"/></svg></span>
+  <span class="flip" style="--r:-12deg;left:4%;top:20%;width:24px;height:56px;animation-delay:-5s"><svg><use href="#hav"/></svg></span>
+  <span class="flip" style="--r:30deg;left:52%;bottom:16%;width:26px;height:60px;animation-delay:-7s"><svg><use href="#hav"/></svg></span>
+  <span class="flip" style="--r:-35deg;right:3%;top:44%;width:28px;height:66px;animation-delay:-4s"><svg><use href="#hav"/></svg></span>
+</div>
+
+<main class="page">
+  <section>
+    <div class="brand"><img src="/azime.png" alt="Azime"><span>apresenta</span></div>
+    <div class="badge"><i></i>Inscrições abertas</div>
+    <h1>Amigo<b>Havaiana</b></h1>
+    <p class="tag">Entre na brincadeira! Cada um tira um colega e dá <strong>uma havaiana novinha</strong> de presente.</p>
+
+    <div class="count" id="count">
+      <div><b id="cd">--</b><span>dias</span></div>
+      <div><b id="ch">--</b><span>horas</span></div>
+      <div><b id="cm">--</b><span>min</span></div>
+      <div><b id="cs">--</b><span>seg</span></div>
+    </div>
+    <div class="when" id="when">para <b>encerrar as inscrições</b></div>
+
+    <div class="steps">
+      <div class="step"><small>Inscrições</small><b class="inscTxt">--</b><span>último dia</span></div>
+      <div class="step"><small>Sorteio</small><b class="dataTxt">--</b><span>por e-mail</span></div>
+      <div class="step entregaStep"><small>Entrega</small><b class="entregaTxt">--</b><span>das havaianas</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="card" id="formCard">
+      <h2>Garanta sua vaga</h2>
+      <p class="hint">Leva menos de 1 minuto.</p>
+      <form id="f" novalidate>
+        <label for="nome">Seu nome</label>
+        <div class="field"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+          <input id="nome" required maxlength="80" autocomplete="name" placeholder="Como te chamam?"></div>
+
+        <label for="email">Seu e-mail</label>
+        <div class="field"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+          <input id="email" type="email" required maxlength="120" autocomplete="email" placeholder="voce@email.com"></div>
+
+        <label for="chinelo">Número da havaiana</label>
+        <div class="field"><svg viewBox="0 0 60 140" style="width:12px;height:22px;left:17px;stroke-width:6"><path d="M30 4C46 4 54 18 52 38C50 56 44 66 46 86C48 108 44 136 30 136C16 136 12 108 14 86C16 66 10 56 8 38C6 18 14 4 30 4Z"/><path d="M30 30L13 66M30 30L47 66"/></svg>
+          <input id="chinelo" required maxlength="5" placeholder="Ex.: 38 ou 37/38" inputmode="numeric"></div>
+        <div class="chips" id="chips"></div>
+
+        <button class="btn" id="btn"><span id="btnTxt">Quero participar</span><span class="arr">→</span></button>
+        <div class="err" id="err"></div>
+      </form>
+      <p class="foot">Ninguém tira a si mesmo. O resultado é secreto, nem o organizador vê. 🤫</p>
+    </div>
+
+    <div class="card done hidden" id="doneCard">
+      <div class="big"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <h2>Você está dentro, <span id="quem"></span>!</h2>
+      <span class="pill">✓ Inscrição confirmada</span>
+      <p>Mandamos uma confirmação para o seu e-mail.</p>
+      <p>No dia <b class="dataTxt"></b> você recebe lá quem tirou. <b>Bico calado!</b> 🤫</p>
+      <p class="entregaP">🩴 Entrega das havaianas: <b class="entregaTxt"></b></p>
+      <button class="again" id="again">Corrigir meus dados</button>
+    </div>
+
+    <div class="card done hidden" id="closedCard">
+      <div class="big"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+      <h2>Inscrições encerradas</h2>
+      <p id="closedMsg">O sorteio já foi realizado. Corre lá no seu e-mail! 📬</p>
+      <p class="entregaP">🩴 Entrega das havaianas: <b class="entregaTxt"></b></p>
+    </div>
+  </section>
+</main>
+
+<canvas id="confetti"></canvas>
+
+<script>
+const $ = id => document.getElementById(id);
+const setTxt = (cls, t) => document.querySelectorAll(cls).forEach(e => e.textContent = t);
+const curta = d => (d || "").slice(0, 5); // 30/11/2026 -> 30/11
+function setDatas(i){
+  setTxt(".dataTxt", curta(i.dataSorteio)); setTxt(".inscTxt", curta(i.dataInscricao)); setTxt(".entregaTxt", curta(i.dataEntrega));
+  if(!i.dataEntrega) document.querySelectorAll(".entregaP,.entregaStep").forEach(e => e.remove());
+}
+
+// atalhos de numeração
+["33/34","35/36","37/38","39/40","41/42","43/44"].forEach(n => {
+  const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = n;
+  b.onclick = () => { $("chinelo").value = n; marcar(); };
+  $("chips").appendChild(b);
+});
+const marcar = () => document.querySelectorAll(".chip").forEach(c => c.classList.toggle("on", c.textContent === $("chinelo").value.trim()));
+$("chinelo").addEventListener("input", marcar);
+
+// contagem regressiva até o fim das inscrições
+let alvo = null;
+function tick(){
+  if(!alvo) return;
+  let s = Math.max(0, Math.floor((alvo - Date.now())/1000));
+  if(s === 0){ $("count").innerHTML = '<div style="padding:10px 18px"><b style="font-size:20px">Inscrições encerradas</b></div>'; $("when").innerHTML = "Sorteio em <b>" + ($("when").dataset.sorteio || "") + "</b>"; return; }
+  const p = n => String(n).padStart(2,"0");
+  $("cd").textContent = Math.floor(s/86400); s%=86400;
+  $("ch").textContent = p(Math.floor(s/3600)); s%=3600;
+  $("cm").textContent = p(Math.floor(s/60)); $("cs").textContent = p(s%60);
+}
+setInterval(tick, 1000);
+
+fetch("/api/info").then(r=>r.json()).then(i=>{
+  setDatas(i);
+  $("when").dataset.sorteio = curta(i.dataSorteio);
+  if(i.fimInscricaoISO){ alvo = new Date(i.fimInscricaoISO).getTime(); tick(); }
+  if(i.encerrado || !i.inscricoesAbertas){
+    document.querySelector(".badge").innerHTML = "<i style='animation:none;background:#8e8e93'></i>Inscrições encerradas";
+    $("formCard").classList.add("hidden"); $("closedCard").classList.remove("hidden");
+    if(!i.encerrado) $("closedMsg").innerHTML = "O prazo terminou em <b>" + curta(i.dataInscricao) + "</b>. O sorteio é dia <b>" + curta(i.dataSorteio) + "</b> e quem se inscreveu recebe o resultado por e-mail. 📬";
+  }
+}).catch(()=>{});
+
+function erro(msg){
+  $("err").textContent = msg; $("err").classList.add("show");
+  const c = $("formCard"); c.classList.remove("shake"); void c.offsetWidth; c.classList.add("shake");
+}
+
+$("f").onsubmit = async e => {
+  e.preventDefault();
+  $("err").classList.remove("show");
+  const nome = $("nome").value.trim(), email = $("email").value.trim(), chinelo = $("chinelo").value.trim();
+  if(!nome) return erro("Faltou seu nome 😉"), $("nome").focus();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return erro("Confere o e-mail? Ele parece incompleto."), $("email").focus();
+  if(!/^\d{2}([\/\-]\d{2})?$/.test(chinelo)) return erro("Número da havaiana: use algo como 38 ou 37/38."), $("chinelo").focus();
+  $("btn").disabled = true; $("btnTxt").textContent = "Enviando…";
+  try{
+    const r = await fetch("/api/inscricao", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({nome, email, chinelo})});
+    const j = await r.json();
+    if(!r.ok) throw new Error(j.erro || "Erro ao enviar.");
+    setDatas({dataSorteio:j.dataSorteio, dataInscricao:j.dataInscricao, dataEntrega:j.dataEntrega});
+    $("quem").textContent = nome.split(" ")[0];
+    $("formCard").classList.add("hidden"); $("doneCard").classList.remove("hidden");
+    $("doneCard").scrollIntoView({behavior:"smooth", block:"center"});
+    confete();
+  }catch(err){ erro(err.message); }
+  $("btn").disabled = false; $("btnTxt").textContent = "Quero participar";
+};
+$("again").onclick = () => { $("doneCard").classList.add("hidden"); $("formCard").classList.remove("hidden"); $("nome").focus(); };
+
+// confete preto e branco
+function confete(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const cv = $("confetti"), ctx = cv.getContext("2d");
+  cv.width = innerWidth; cv.height = innerHeight;
+  const cores = ["#ffffff","#f2f2f4","#a1a1a6","#d4d4d8","#3a3a3c","#0a0a0a"];
+  const ps = Array.from({length:170}, () => ({x: Math.random()*cv.width, y: -20 - Math.random()*cv.height*.5,
+    w: 6+Math.random()*6, h: 8+Math.random()*8, vy: 2+Math.random()*3.5, vx: -1.5+Math.random()*3,
+    r: Math.random()*6, vr: -.2+Math.random()*.4, c: cores[Math.floor(Math.random()*cores.length)]}));
+  const fim = Date.now() + 4000;
+  (function frame(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ps.forEach(p => { p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r); ctx.fillStyle = p.c; ctx.strokeStyle = "rgba(0,0,0,.25)";
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.strokeRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore(); });
+    if(Date.now() < fim) requestAnimationFrame(frame); else ctx.clearRect(0,0,cv.width,cv.height);
+  })();
+}
+</script>
+</body>
+</html>

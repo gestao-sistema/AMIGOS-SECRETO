@@ -1,0 +1,12 @@
+{
+  "name": "amigo-secreto-chinelo",
+  "version": "1.0.0",
+  "description": "Amigo secreto do chinelo: inscrição por link, sorteio no dia marcado e envio por e-mail",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "express": "^4.21.0",
+    "nodemailer": "^6.9.15"
+  }
+}
