@@ -220,7 +220,7 @@ app.post("/api/admin/convites", auth, async (req, res) => {
   for (const email of emails) {
     try {
       await sendMail(email, "💌 Você foi convidado(a) para o Amigo Havaiana!",
-        EMAILS.convite({ ...DATAS(), link: BASE_URL, obs: OBS }));
+        EMAILS.convite({ ...DATAS(), link: baseDe(req), obs: OBS }));
       DB.convites[email] = "enviado";
       resultado.push({ email, ok: true });
     } catch (e) {
